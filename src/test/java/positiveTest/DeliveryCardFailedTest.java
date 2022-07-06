@@ -1,6 +1,7 @@
 package positiveTest;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,27 +20,28 @@ public class DeliveryCardFailedTest {
 
     @BeforeEach
     void openUrl() {
+        Configuration.browser = "firefox";
+        Configuration.holdBrowserOpen = true;
         open("http://localhost:9999");
     }
 
     @AfterEach
     void tearDown() {
+
         closeWindow();
     }
 
 
     @Test
     void shouldTestSuccessOrderIfNameWithLetterYo() {
-        LocalDate localDate = LocalDate.now().plusDays(33);
-        String date = DateTimeFormatter.ofPattern("dd.MM.yyyy").format(localDate);
+        String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+
         $("[data-test-id='city'] .input__control").setValue("Ульяновск");
-        $("[data-test-id='date'] .input__control").doubleClick();
-        $("[data-test-id='date'] .input__control").sendKeys(Keys.chord(BACK_SPACE,date));
-        $("[data-test-id='name'] .input__control").setValue("Гребенькова Алёна");
-        $("[data-test-id='phone'] .input__control").setValue("+79876543210");
+        $("[data-test-id='date'] .input__control").sendKeys(date);
+        $("[data-test-id='name'] .input__control").setValue("Иванов Сергей");
+        $("[data-test-id='phone'] .input__control").setValue("+79788582811");
         $$(".checkbox__box").find(Condition.visible).click();
         $$("button").find(Condition.exactText("Забронировать")).click();
-        $(withText("Встреча успешно забронирована"))
-                .shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $(withText("Встреча успешно забронирована")).shouldBe(Condition.visible, Duration.ofSeconds(15));
     }
 }
